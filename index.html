@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dorca Conecta | Calculadora</title>
+<style>
+:root{--bg:#061525;--card:#0b2035;--card2:#07192b;--gold:#f7c844;--green:#20c66a;--text:#f5f7fb;--muted:#aebdcd;--line:#18354f}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#04111f,#081d32);color:var(--text);font-family:Arial,sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px}.top{text-align:center;padding:14px 0 20px}
+.logo{width:105px;height:105px;object-fit:contain;border-radius:24px;background:#fff;padding:6px}
+h1{margin:12px 0 4px;font-size:30px}h2{color:var(--gold);margin:0 0 12px}.sub{color:var(--muted)}
+.card{background:rgba(11,32,53,.94);border:1px solid var(--line);border-radius:26px;padding:22px;margin:16px 0;box-shadow:0 10px 35px #0003}
+.rategrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rate{background:var(--card2);border-radius:18px;padding:18px}.rate b{display:block;font-size:18px;margin-bottom:9px}.value{font-size:28px;font-weight:800;color:var(--gold)}.date{font-size:12px;color:var(--muted);margin-top:5px}
+label{display:block;margin:12px 0 7px;color:var(--muted)}select,input{width:100%;padding:15px;border-radius:14px;border:1px solid #274967;background:#061525;color:#fff;font-size:17px}
+button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:800;cursor:pointer}.primary{background:var(--gold);color:#111;width:100%;margin-top:14px}.wa{display:block;text-align:center;background:var(--green);color:white;text-decoration:none;border-radius:16px;padding:16px;font-weight:800;margin-top:16px}
+.result{background:#061525;border-radius:18px;padding:18px;margin-top:16px}.result strong{color:var(--gold);font-size:24px}
+.method{background:#061525;border-radius:18px;padding:16px;margin:10px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}.method button{background:var(--gold);color:#111;padding:10px 14px}
+.admin input{margin-bottom:8px}.adminrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.save{background:var(--green);color:#fff;margin-top:12px;width:100%}.logout{background:#31465b;color:#fff;margin-top:8px;width:100%}.hidden{display:none}.notice{color:var(--muted);font-size:13px;line-height:1.5}
+@media(max-width:560px){.rategrid,.adminrow{grid-template-columns:1fr}.wrap{padding:12px}.card{padding:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<img src="logo.png" class="logo" alt="Dorca Conecta">
+<h1>Dorca Conecta</h1><div class="sub">Calculadora de cambio Colombia ↔ Venezuela</div>
+</header>
+
+<section class="card">
+<h2>📌 Tasas publicadas</h2>
+<div class="sub">Estas son las tasas vigentes para todos los clientes.</div>
+<div class="rategrid" style="margin-top:16px">
+<div class="rate"><b>🇨🇴 Colombia → 🇻🇪 Venezuela</b><div class="value" id="rCoVe">3.98</div><div class="date" id="dCoVe"></div></div>
+<div class="rate"><b>🇻🇪 Venezuela → 🇨🇴 Colombia</b><div class="value" id="rVeCo">3.00</div><div class="date" id="dVeCo"></div></div>
+<div class="rate"><b>💵 Dólar Colombia</b><div class="value" id="rUsdCo">3,300.00</div><div class="date" id="dUsdCo"></div></div>
+<div class="rate"><b>💵 Dólar Venezuela / BCV</b><div class="value" id="rBcv">857.01</div><div class="date" id="dBcv"></div></div>
+</div>
+</section>
+
+<section class="card">
+<h2>🧮 Calculadora</h2>
+<label>Operación</label>
+<select id="op" onchange="updateMin()">
+<option value="coVe">🇨🇴 Enviar Colombia → Venezuela</option>
+<option value="veCo">🇻🇪 Enviar Venezuela → Colombia</option>
+</select>
+<label id="amountLabel">Monto en pesos colombianos (COP)</label>
+<input id="amount" type="number" inputmode="decimal" placeholder="Ej: 200000">
+<button class="primary" onclick="calculate()">Calcular</button>
+<div id="result" class="result hidden"></div>
+<a class="wa" id="wa" target="_blank" href="#">📲 Hablar por WhatsApp</a>
+</section>
+
+<section class="card">
+<h2>💳 Métodos de pago</h2>
+<div class="sub">Pulsa “Copiar” para copiar cada dato individualmente.</div>
+<div class="method"><div><b>🇨🇴 Nequi — Dorca Pinto</b><br>3207545616</div><button onclick="copyText('3207545616')">Copiar</button></div>
+<div class="method"><div><b>🇨🇴 Nequi — Eliexer Bolívar</b><br>Contacto registrado</div><button onclick="copyText('Eliexer Bolívar')">Copiar</button></div>
+<div class="method"><div><b>🇨🇴 Nequi — Ashley Bolívar</b><br>3207545616</div><button onclick="copyText('3207545616')">Copiar</button></div>
+<div class="method"><div><b>🔑 Llave Bre</b><br>@dorca057</div><button onclick="copyText('@dorca057')">Copiar</button></div>
+<div class="method"><div><b>🇻🇪 Banco de Venezuela</b><br>0102 · Cuenta 16423526<br>Tel. 04245418001</div><button onclick="copyText('0102 | Cuenta 16423526 | 04245418001')">Copiar</button></div>
+</section>
+
+<section class="card admin">
+<h2>🔐 Administrador</h2>
+div class="sub">Área privada para publicar las nuevas tasas.</div>
+<div id="login">
+<label>Contraseña</label><input id="pass" type="password" placeholder="Contraseña">
+<button class="primary" onclick="login()">Entrar</button>
+<p class="notice">Contraseña inicial: <b>Dorca2026</b>. Puedes cambiarla dentro del código si lo deseas.</p>
+</div>
+<div id="panel" class="hidden">
+<div class="adminrow">
+<div><label>Colombia → Venezuela</label><input id="aCoVe" type="number" step="0.01"></div>
+<div><label>Venezuela → Colombia</label><input id="aVeCo" type="number" step="0.01"></div>
+<div><label>Dólar Colombia</label><input id="aUsdCo" type="number" step="0.01"></div>
+<div><label>Dólar Venezuela / BCV</label><input id="aBcv" type="number" step="0.01"></div>
+</div>
+<label>Fecha de publicación</label><input id="aDate" type="date">
+<button class="save" onclick="saveRates()">💾 Guardar y publicar tasas</button>
+<button class="logout" onclick="logout()">Salir</button>
+<p class="notice">Las tasas guardadas quedan visibles en “Tasas publicadas” en este sitio. Para que una modificación se vea en otros dispositivos, el proyecto necesita una base de datos/backend compartido.</p>
+</div>
+</section>
+</div>
+<script>
+const KEY="dorca_conecta_rates_v1";
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{coVe:3.98,veCo:3.00,usdCo:3300.00,bcv:857.01,date:new Date().toISOString().slice(0,10)};
+function fmt(n){return Number(n).toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function render(){
+rCoVe.textContent=fmt(data.coVe);rVeCo.textContent=fmt(data.veCo);rUsdCo.textContent=fmt(data.usdCo);rBcv.textContent=fmt(data.bcv);
+document.querySelectorAll('.date').forEach(x=>x.textContent=data.date?'Vigente desde: '+data.date:'');
+}
+function updateMin(){amount.value='';amountLabel.textContent=op.value==='coVe'?'Monto en pesos colombianos (COP)':'Monto en bolívares (Bs)'}
+function calculate(){
+let x=Number(amount.value); if(!x||x<=0){result.classList.remove('hidden');result.innerHTML='<b>Ingresa un monto válido.</b>';return}
+let text;
+if(op.value==='coVe'){if(x<20000||x>4000000){text='Mínimo: $20.000 COP · Máximo: $4.000.000 COP';}else{text=`Recibes aproximadamente <strong>${fmt(x/data.coVe)} Bs</strong><br><span class="notice">Tasa aplicada: ${fmt(data.coVe)}</span>`}}
+else{if(x<5000||x>300000){text='Mínimo: 5.000 Bs · Máximo: 300.000 Bs';}else{let cop=x*data.veCo; text=`Recibes aproximadamente <strong>$${fmt(cop)} COP</strong><br><span class="notice">Referencia en USD Colombia: US$ ${fmt(cop/data.usdCo)} · Tasa: ${fmt(data.veCo)}</span>`}}
+result.classList.remove('hidden');result.innerHTML=text;
+let msg=encodeURIComponent(`Hola Dorca Conecta, quiero realizar una operación. Monto: ${x}. Operación: ${op.value==='coVe'?'Colombia → Venezuela':'Venezuela → Colombia'}.`);
+wa.href='https://wa.me/573019213382?text='+msg;
+}
+function copyText(t){navigator.clipboard?.writeText(t);alert('Copiado: '+t)}
+function login(){if(pass.value==='Dorca2026'){loginDiv();}else alert('Contraseña incorrecta');}
+function loginDiv(){loginEl.classList.add('hidden');panel.classList.remove('hidden');aCoVe.value=data.coVe;aVeCo.value=data.veCo;aUsdCo.value=data.usdCo;aBcv.value=data.bcv;aDate.value=data.date}
+function saveRates(){data={coVe:Number(aCoVe.value),veCo:Number(aVeCo.value),usdCo:Number(aUsdCo.value),bcv:Number(aBcv.value),date:aDate.value};localStorage.setItem(KEY,JSON.stringify(data));render();alert('Tasas publicadas correctamente.');}
+function logout(){panel.classList.add('hidden');loginEl.classList.remove('hidden');pass.value=''}
+const loginEl=document.getElementById('login');
+render();updateMin();
+</script>
+</body></html>
